@@ -30,8 +30,7 @@ defmodule MixTestWatch.Mixfile do
 
   def application do
     [
-      mod: {MixTestWatch, []},
-      applications: [:file_system]
+      mod: {MixTestWatch.Application, []}
     ]
   end
 
@@ -40,9 +39,9 @@ defmodule MixTestWatch.Mixfile do
       # File system event watcher
       {:file_system, "~> 0.2.1 or ~> 0.3"},
       # App env state test helper
-      {:temporary_env, "~> 2.0", only: :test},
+      {:temporary_env, "~> 2.0", only: [:test], runtime: false},
       # Documentation generator
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: [:dev]}
     ]
   end
 
