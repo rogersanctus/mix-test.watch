@@ -1,8 +1,7 @@
 defmodule MixTestWatch.RunnerTest do
   use ExUnit.Case, async: false
-  alias MixTestWatch, as: MTW
-  alias MTW.Runner
-  alias MTW.Config
+  alias MixTestWatch.Runner
+  alias MixTestWatch.Config
   import ExUnit.CaptureIO
 
   defmodule DummyRunner do
@@ -55,6 +54,26 @@ defmodule MixTestWatch.RunnerTest do
         |> String.trim()
 
       assert {:ok, _} = NaiveDateTime.from_iso8601(timestamp)
+    end
+
+    test "It clears output when specified by the config" do
+      config = %Config{runner: DummyRunner, clear: true}
+
+      output =
+        capture_io(fn ->
+          Runner.run(config)
+        end)
+
+      assert Agent.get(DummyRunner, fn x -> x end) == [config]
+
+      cleared =
+        output
+        |> String.replace_trailing(
+          "\n\nRunning tests...\n",
+          ""
+        )
+
+      assert cleared == IO.ANSI.home() <> IO.ANSI.clear() <> Runner.ansi_erase_scroll_back()
     end
   end
 end
