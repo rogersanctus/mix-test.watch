@@ -7,5 +7,5 @@ defmodule Mix.Tasks.Test.Watch do
   @shortdoc "Automatically run tests on file changes"
   @preferred_cli_env :test
 
-  defdelegate run(args), to: MixTestWatch
+  defdelegate run(args), to: MixTestWatch.Application
 end
