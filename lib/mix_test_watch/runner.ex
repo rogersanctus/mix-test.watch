@@ -24,12 +24,20 @@ defmodule MixTestWatch.Runner do
     :ok
   end
 
+  @doc """
+  ANSI escape character to erase scroll-back from terminal.
+  """
+  @spec ansi_erase_scrollback() :: String.t()
+  def ansi_erase_scrollback() do
+    "\e[3J"
+  end
+
   #
   # Internal functions
   #
 
   defp maybe_clear_terminal(%{clear: false}), do: :ok
-  defp maybe_clear_terminal(%{clear: true}), do: :ok = IO.puts(IO.ANSI.clear() <> IO.ANSI.home())
+  defp maybe_clear_terminal(%{clear: true}), do: :ok = real_clear_screen()
 
   defp maybe_print_timestamp(%{timestamp: false}), do: :ok
 
@@ -38,5 +46,10 @@ defmodule MixTestWatch.Runner do
       DateTime.utc_now()
       |> DateTime.to_string()
       |> IO.puts()
+  end
+
+  defp real_clear_screen() do
+    (IO.ANSI.home() <> IO.ANSI.clear() <> ansi_erase_scrollback())
+    |> IO.puts()
   end
 end
