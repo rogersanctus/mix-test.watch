@@ -1,7 +1,6 @@
 defmodule MixTestWatch.Watcher do
   use GenServer
 
-  alias MixTestWatch, as: MTW
   alias MixTestWatch.Config
 
   require Logger
@@ -26,25 +25,27 @@ defmodule MixTestWatch.Watcher do
   # Genserver callbacks
   #
 
-  @spec init(String.t()) :: {:ok, %{args: String.t()}}
-
+  @spec init(any) :: {:ok, []} | {:error, any}
   def init(_) do
     opts = [dirs: [Path.absname("")], name: :mix_test_watcher]
+
     case FileSystem.start_link(opts) do
       {:ok, _} ->
         FileSystem.subscribe(:mix_test_watcher)
         {:ok, []}
+
       other ->
-        Logger.warn """
+        Logger.warning("""
         Could not start the file system monitor.
-        """
+        """)
+
         other
     end
   end
 
   def handle_cast(:run_tasks, state) do
     config = get_config()
-    MTW.Runner.run(config)
+    MixTestWatch.Runner.run(config)
     {:noreply, state}
   end
 
@@ -52,9 +53,9 @@ defmodule MixTestWatch.Watcher do
     config = get_config()
     path = to_string(path)
 
-    if MTW.Path.watching?(path, config) do
-      MTW.Runner.run(config)
-      MTW.MessageInbox.flush()
+    if MixTestWatch.Path.watching?(path, config) do
+      MixTestWatch.Runner.run(config)
+      MixTestWatch.MessageInbox.flush()
     end
 
     {:noreply, state}

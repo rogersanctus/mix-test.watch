@@ -12,8 +12,7 @@ defmodule MixTestWatch.Path do
   # Public API
   #
 
-  @spec watching?(MixTestWatch.Config.t(), String.t()) :: boolean
-
+  @spec watching?(String.t(), MixTestWatch.Config.t()) :: boolean
   def watching?(path, config \\ %Config{}) do
     watched_directory?(path) and elixir_extension?(path, config.extra_extensions) and
       not excluded?(config, path)
@@ -24,7 +23,6 @@ defmodule MixTestWatch.Path do
   #
 
   @spec excluded?(MixTestWatch.Config.t(), String.t()) :: boolean
-
   defp excluded?(config, path) do
     config.exclude
     |> Enum.map(fn pattern -> Regex.match?(pattern, path) end)
