@@ -24,3 +24,6 @@ mix_test_watch-*.tar
 
 # Temporary files for e.g. tests.
 /tmp
+
+# The elixir language server directory
+/.elixir_ls/
